@@ -1,0 +1,27 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.message-bubble {
+  display: flex;
+  gap: 12px;
+  margin: 0 0 24px;
+
+  &__avatar { flex: 0 0 30px; width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: rgba(255,255,255,.055); color: v.$text-secondary; border: 1px solid v.$glass-border; }
+  &__content { min-width: 0; flex: 1; }
+  &__meta { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  &__role { font-size: .75rem; color: v.$text-secondary; font-weight: 650; }
+  &__time { font-size: .68rem; color: v.$text-muted; }
+  &__body { color: v.$text-primary; font-size: .95rem; line-height: 1.75; overflow-wrap: anywhere; }
+  &.is-user { .message-bubble__content { background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.05); border-radius: 14px; padding: 10px 13px; } }
+  &.is-assistant { .message-bubble__avatar { background: rgba(126,140,255,.12); color: #d9dcff; border-color: rgba(126,140,255,.18); } }
+}
+
+@include m.respond(mobile) {
+  .message-bubble { gap: 9px; margin-bottom: 20px; &__avatar { width: 28px; height: 28px; } &__body { font-size: .91rem; line-height: 1.68; } }
+}
+
+.message-row__attachments {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 8px;
+}

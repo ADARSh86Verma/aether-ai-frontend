@@ -1,0 +1,67 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.select-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-1;
+  min-width: 160px;
+
+  &__label {
+    font-size: v.$fs-xs;
+    color: v.$text-muted;
+    font-weight: 600;
+  }
+
+  &__trigger {
+    @include m.glass;
+    @include m.flex(center, space-between);
+    padding: v.$space-2 v.$space-3;
+    border-radius: v.$radius-sm;
+    font-size: v.$fs-sm;
+    color: v.$text-primary;
+    width: 100%;
+    @include m.focus-ring;
+
+    svg {
+      transition: transform v.$dur-fast v.$ease-out;
+      color: v.$text-muted;
+    }
+
+    &.is-open svg { transform: rotate(180deg); }
+  }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    @include m.glass(v.$bg-elevated, v.$glass-border-strong, 24px);
+    border-radius: v.$radius-sm;
+    box-shadow: v.$shadow-lift;
+    overflow: hidden;
+    max-height: 240px;
+    overflow-y: auto;
+    @include m.custom-scrollbar;
+
+    button {
+      width: 100%;
+      text-align: left;
+      padding: v.$space-2 v.$space-3;
+      font-size: v.$fs-sm;
+      color: v.$text-secondary;
+      @include m.flex(center, space-between);
+
+      &:hover { background: rgba(255, 255, 255, 0.06); color: v.$text-primary; }
+
+      svg { color: var(--accent-solid); }
+    }
+  }
+
+  &__hint {
+    font-size: v.$fs-xs;
+    color: v.$text-muted;
+  }
+}

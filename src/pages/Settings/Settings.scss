@@ -1,0 +1,261 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.settings-page {
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  padding: v.$space-5 v.$space-6 v.$space-7;
+  max-width: 1100px;
+  margin: 0 auto;
+
+  @include m.respond(mobile) {
+    padding: v.$space-4 v.$space-3 v.$space-6;
+  }
+
+  &__header {
+    @include m.flex(center, flex-start, v.$space-3);
+    margin-bottom: v.$space-6;
+
+    h1 {
+      font-size: v.$fs-2xl;
+      @include m.gradient-text(var(--accent-grad-text, #{v.$gradient-text}));
+    }
+  }
+
+  &__back {
+    width: 40px;
+    height: 40px;
+    border-radius: v.$radius-full;
+    @include m.glass;
+    @include m.flex(center, center);
+    color: v.$text-secondary;
+    flex-shrink: 0;
+    &:hover { color: v.$text-primary; }
+  }
+
+  &__body {
+    display: flex;
+    gap: v.$space-6;
+    align-items: flex-start;
+
+    @include m.respond(laptop) {
+      flex-direction: column;
+    }
+  }
+
+  &__nav {
+    width: 240px;
+    flex-shrink: 0;
+    @include m.glass;
+    border-radius: v.$radius-lg;
+    padding: v.$space-2;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: sticky;
+    top: v.$space-5;
+
+    @include m.respond(laptop) {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      position: static;
+      @include m.custom-scrollbar;
+    }
+  }
+
+  &__tab {
+    @include m.flex(center, flex-start, v.$space-3);
+    padding: v.$space-3;
+    border-radius: v.$radius-md;
+    font-size: v.$fs-sm;
+    color: v.$text-secondary;
+    white-space: nowrap;
+    transition: background v.$dur-fast v.$ease-out, color v.$dur-fast v.$ease-out;
+
+    &:hover { background: rgba(255, 255, 255, 0.05); color: v.$text-primary; }
+
+    &.is-active {
+      background: var(--accent-grad);
+      color: #fff;
+      box-shadow: var(--accent-glow);
+    }
+
+    &-icon {
+      display: flex;
+      font-size: 1.1rem;
+    }
+  }
+
+  &__panel {
+    flex: 1;
+    min-width: 0;
+    @include m.glass;
+    border-radius: v.$radius-lg;
+    padding: v.$space-5 v.$space-6;
+
+    @include m.respond(mobile) {
+      padding: v.$space-4;
+    }
+  }
+}
+
+.settings-section {
+  &:not(:last-child) {
+    margin-bottom: v.$space-6;
+  }
+
+  h3 {
+    font-size: v.$fs-md;
+    margin-bottom: v.$space-2;
+    color: v.$text-primary;
+  }
+
+  &__rows {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.settings-badge {
+  @include m.flex(center, center, 6px);
+  font-size: v.$fs-xs;
+  font-weight: 600;
+  color: v.$color-success;
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  padding: 4px 10px;
+  border-radius: v.$radius-full;
+}
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-1;
+
+  &__item {
+    @include m.flex(center, space-between);
+    padding: v.$space-3 0;
+    border-bottom: 1px solid v.$glass-border;
+
+    &:last-child { border-bottom: none; }
+
+    div { display: flex; flex-direction: column; gap: 2px; }
+  }
+
+  &__device {
+    font-size: v.$fs-sm;
+    color: v.$text-primary;
+
+    em {
+      font-style: normal;
+      color: var(--accent-solid);
+      font-size: v.$fs-xs;
+    }
+  }
+
+  &__location {
+    font-size: v.$fs-xs;
+    color: v.$text-muted;
+  }
+
+  &__revoke {
+    font-size: v.$fs-xs;
+    color: v.$color-danger;
+    padding: 4px 10px;
+    border-radius: v.$radius-sm;
+    &:hover { background: rgba(251, 113, 133, 0.1); }
+  }
+}
+
+.settings-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-3;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-1;
+    font-size: v.$fs-xs;
+    color: v.$text-muted;
+  }
+
+  input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid v.$glass-border;
+    border-radius: v.$radius-sm;
+    padding: v.$space-2 v.$space-3;
+    color: v.$text-primary;
+    font-size: v.$fs-sm;
+    outline: none;
+
+    &:focus { border-color: var(--accent-solid); }
+  }
+}
+
+/* Settings owns the viewport scroll on mobile/standalone routes. */
+.settings-page {
+  height: 100dvh;
+  min-height: 100svh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding-bottom: calc(v.$space-8 + env(safe-area-inset-bottom));
+  @include m.custom-scrollbar;
+}
+
+@include m.respond(mobile) {
+  .settings-page {
+    padding: 12px 10px calc(26px + env(safe-area-inset-bottom));
+
+    &__header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      margin: -12px -10px 14px;
+      padding: 9px 10px;
+      background: rgba(16,17,20,.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid v.$glass-border;
+
+      h1 { font-size: 1.25rem; }
+    }
+
+    &__body {
+      gap: 10px;
+    }
+
+    &__nav {
+      position: sticky;
+      top: 54px;
+      z-index: 4;
+      width: 100%;
+      display: flex;
+      overflow-x: auto;
+      overflow-y: hidden;
+      flex-direction: row;
+      padding: 5px;
+      gap: 3px;
+      border-radius: 12px;
+      -webkit-overflow-scrolling: touch;
+      @include m.custom-scrollbar(3px);
+    }
+
+    &__tab {
+      flex: 0 0 auto;
+      padding: 9px 11px;
+      font-size: .73rem;
+    }
+
+    &__panel {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+    }
+  }
+}

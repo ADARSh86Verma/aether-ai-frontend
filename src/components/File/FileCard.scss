@@ -1,0 +1,61 @@
+.file-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  width: min(100%, 420px);
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  background: rgba(255,255,255,.045);
+  color: var(--text-primary, #f3f4f6);
+}
+
+.file-card__icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(139,124,255,.12);
+  color: #9b8fff;
+  font-size: 18px;
+}
+
+.file-card__info {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.file-card__info strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.file-card__info span {
+  font-size: 11px;
+  opacity: .6;
+}
+
+.file-card__download {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.file-card__download:hover {
+  background: rgba(255,255,255,.07);
+}
+
+.file-card.is-compact {
+  width: 100%;
+}

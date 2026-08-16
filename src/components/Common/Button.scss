@@ -1,0 +1,67 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.btn {
+  @include m.flex(center, center, v.$space-2);
+  font-family: v.$font-body;
+  font-weight: 600;
+  font-size: v.$fs-sm;
+  border-radius: v.$radius-md;
+  white-space: nowrap;
+  @include m.hover-lift;
+  @include m.focus-ring;
+
+  &__icon {
+    display: inline-flex;
+    font-size: 1.05em;
+  }
+
+  // ---- sizes ----
+  &--sm { padding: v.$space-2 v.$space-3; font-size: v.$fs-xs; }
+  &--md { padding: v.$space-3 v.$space-5; }
+  &--lg { padding: v.$space-4 v.$space-6; font-size: v.$fs-base; }
+
+  // ---- variants ----
+  &--primary {
+    color: #fff;
+    background: var(--accent-grad, #{v.$gradient-primary});
+    box-shadow: var(--accent-glow, #{v.$shadow-glow-blue});
+    &:hover { filter: brightness(1.08); }
+    &:active { transform: translateY(0) scale(0.98); }
+  }
+
+  &--ghost {
+    color: v.$text-secondary;
+    background: transparent;
+    &:hover { color: v.$text-primary; background: rgba(255, 255, 255, 0.05); }
+  }
+
+  &--glass {
+    @include m.glass;
+    color: v.$text-primary;
+    &:hover { background: v.$glass-bg-strong; border-color: v.$glass-border-strong; }
+  }
+
+  &--danger {
+    color: v.$color-danger;
+    background: rgba(251, 113, 133, 0.1);
+    border: 1px solid rgba(251, 113, 133, 0.25);
+    &:hover { background: rgba(251, 113, 133, 0.18); }
+  }
+
+  &--icon {
+    padding: v.$space-2;
+    width: 38px;
+    height: 38px;
+    border-radius: v.$radius-full;
+    color: v.$text-secondary;
+    background: transparent;
+    &:hover { color: v.$text-primary; background: rgba(255, 255, 255, 0.06); }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+}

@@ -1,0 +1,115 @@
+.coding-loader {
+  padding: 20px;
+}
+
+.terminal {
+  background: #111827;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #2d3748;
+}
+
+.terminal-header {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 15px;
+  background: #1f2937;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.red {
+  background: #ff5f57;
+}
+
+.yellow {
+  background: #ffbd2e;
+}
+
+.green {
+  background: #28c840;
+}
+
+.terminal-body {
+  padding: 20px;
+}
+
+.line {
+  color: #4ade80;
+  font-family: monospace;
+  font-size: 15px;
+}
+
+.cursor {
+  margin-right: 8px;
+}
+
+.typing::after {
+  content: "|";
+  animation: blink 1s infinite;
+}
+
+.progress {
+  margin-top: 18px;
+  height: 6px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #222;
+}
+
+.progress-bar {
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #06b6d4);
+  animation: loading 1.2s infinite;
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+  animation: bounce 0.6s infinite alternate;
+}
+
+.dots span:nth-child(2) {
+  animation-delay: .2s;
+}
+
+.dots span:nth-child(3) {
+  animation-delay: .4s;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes loading {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(350%);
+  }
+}
+
+@keyframes bounce {
+  to {
+    transform: translateY(-6px);
+    opacity: .4;
+  }
+}

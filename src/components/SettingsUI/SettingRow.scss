@@ -1,0 +1,54 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.setting-row {
+  @include m.flex(center, space-between, v.$space-5);
+  padding: v.$space-4 0;
+  border-bottom: 1px solid v.$glass-border;
+
+  &:last-child { border-bottom: none; }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 60%;
+  }
+
+  &__title {
+    font-size: v.$fs-sm;
+    font-weight: 600;
+    color: v.$text-primary;
+  }
+
+  &__desc {
+    font-size: v.$fs-xs;
+    color: v.$text-muted;
+    line-height: 1.4;
+  }
+
+  &__control {
+    flex-shrink: 0;
+    min-width: 160px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &--stack {
+    flex-direction: column;
+    align-items: stretch;
+    gap: v.$space-3;
+
+    .setting-row__text { max-width: none; }
+    .setting-row__control { min-width: 0; justify-content: stretch; }
+  }
+
+  @include m.respond(mobile) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: v.$space-3;
+
+    &__text { max-width: none; }
+    &__control { justify-content: stretch; min-width: 0; }
+  }
+}

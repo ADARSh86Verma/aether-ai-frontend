@@ -1,0 +1,103 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.api-keys {
+  &__intro {
+    font-size: v.$fs-sm;
+    color: v.$text-secondary;
+    line-height: 1.6;
+    margin-bottom: v.$space-4;
+  }
+
+  &__create {
+    display: flex;
+    gap: v.$space-2;
+    margin-bottom: v.$space-4;
+
+    input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid v.$glass-border;
+      border-radius: v.$radius-sm;
+      padding: v.$space-2 v.$space-3;
+      color: v.$text-primary;
+      font-size: v.$fs-sm;
+      outline: none;
+      &:focus { border-color: var(--accent-solid); }
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-2;
+  }
+
+  &__item {
+    @include m.glass;
+    @include m.flex(center, flex-start, v.$space-3);
+    padding: v.$space-3;
+    border-radius: v.$radius-md;
+  }
+
+  &__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: v.$radius-md;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--accent-solid);
+    @include m.flex(center, center);
+    flex-shrink: 0;
+    font-size: 1.1rem;
+  }
+
+  &__meta {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__name {
+    font-size: v.$fs-sm;
+    font-weight: 600;
+    color: v.$text-primary;
+  }
+
+  &__value {
+    font-family: v.$font-mono;
+    font-size: v.$fs-xs;
+    color: v.$text-secondary;
+    word-break: break-all;
+  }
+
+  &__dates {
+    font-size: 0.7rem;
+    color: v.$text-muted;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+
+    button {
+      width: 30px;
+      height: 30px;
+      @include m.flex(center, center);
+      border-radius: v.$radius-sm;
+      color: v.$text-muted;
+
+      &:hover { color: v.$text-primary; background: rgba(255, 255, 255, 0.06); }
+      &.is-danger:hover { color: v.$color-danger; background: rgba(251, 113, 133, 0.1); }
+    }
+  }
+
+  &__empty {
+    text-align: center;
+    color: v.$text-muted;
+    font-size: v.$fs-sm;
+    padding: v.$space-5 0;
+  }
+}

@@ -1,0 +1,70 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.chat-container {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: v.$bg-base;
+  position: relative;
+  overflow: hidden;
+
+  &__scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    @include m.custom-scrollbar;
+  }
+
+  &__messages {
+    width: min(100%, #{v.$chat-max-width});
+    margin: 0 auto;
+    padding: 34px 26px 18px;
+  }
+
+  &__footer {
+    width: min(100%, #{v.$chat-max-width});
+    margin: 0 auto;
+    padding: 0 26px 18px;
+    flex-shrink: 0;
+  }
+
+  &__stop { display: flex; justify-content: center; padding-bottom: 10px; }
+  &__loader { padding: 0 0 10px; }
+  &__error {
+    margin: 10px 0;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: #f2a0a8;
+    font-size: .8rem;
+    padding: 9px 12px;
+    border: 1px solid rgba(235,127,136,.16);
+    background: rgba(235,127,136,.05);
+    border-radius: 10px;
+  }
+
+  @include m.respond(mobile) {
+    &__messages {
+      width: 100%;
+      padding: 20px 12px 16px;
+    }
+
+    &__footer {
+      width: 100%;
+      padding: 0 10px calc(8px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, v.$bg-base 72%, transparent);
+    }
+  }
+
+  @include m.respond(small) {
+    &__messages { padding-inline: 9px; }
+    &__footer { padding-inline: 7px; }
+  }
+}

@@ -1,0 +1,34 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.theme-toggle {
+  width: 52px;
+  height: 30px;
+  border-radius: v.$radius-full;
+  background: v.$bg-elevated-2;
+  border: 1px solid v.$glass-border;
+  position: relative;
+  padding: 2px;
+  @include m.focus-ring;
+
+  [data-theme='light'] & {
+    background: #dfe4fb;
+  }
+
+  &__thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: v.$radius-full;
+    background: v.$gradient-primary;
+    color: #fff;
+    @include m.flex(center, center);
+    font-size: 0.8rem;
+    transition: transform v.$dur-base v.$ease-out;
+    transform: translateX(0);
+
+    &.is-light {
+      transform: translateX(22px);
+      background: linear-gradient(135deg, #fbbf24, #f97316);
+    }
+  }
+}

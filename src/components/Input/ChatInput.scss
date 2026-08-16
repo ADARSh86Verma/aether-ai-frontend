@@ -1,0 +1,159 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.chat-input {
+  @include m.glass(rgba(23,25,29,.92), rgba(255,255,255,.08), 16px);
+  border-radius: 18px;
+  padding: 12px 12px 10px;
+  box-shadow: 0 12px 34px rgba(0,0,0,.22);
+
+  [data-theme='light'] & { background: rgba(255,255,255,.95); }
+
+  textarea {
+    width: 100%;
+    min-height: 44px;
+    max-height: 180px;
+    resize: none;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: v.$text-primary;
+    line-height: 1.5;
+    padding: 4px 5px;
+    font-size: .95rem;
+    &::placeholder { color: v.$text-muted; }
+  }
+
+  &__row { display: flex; align-items: center; gap: 7px; margin-top: 7px; }
+  &__counter { margin-right: auto; color: v.$text-muted; font-size: .69rem; }
+  &__counter.is-warning { color: v.$color-warning; }
+  &__mic, &__send { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; color: v.$text-secondary; transition: .2s ease; @include m.focus-ring; }
+  &__mic:hover { background: rgba(255,255,255,.06); color: v.$text-primary; }
+  &__mic.is-listening { color: #fff; background: rgba(235,127,136,.18); border: 1px solid rgba(235,127,136,.3); animation: pulse 1.4s ease-in-out infinite; }
+  &__send { color: #fff; background: var(--accent-solid); box-shadow: 0 8px 18px rgba(111,124,248,.16); &:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); } }
+  &__speech-error { color: v.$color-danger; font-size: .72rem; padding: 3px 5px 0; }
+
+  &.is-disabled { opacity: .85; }
+}
+
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+@include m.respond(mobile) {
+  .chat-input { border-radius: 16px; padding: 10px 9px 8px; textarea { font-size: .92rem; } }
+}
+
+@include m.respond(mobile) {
+  .chat-input {
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+
+    textarea {
+      min-height: 42px;
+      max-height: 150px;
+      font-size: .92rem;
+    }
+
+    &__row {
+      min-height: 36px;
+    }
+
+    &__mic,
+    &__send {
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+.chat-input__speech-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 5px 0;
+  color: v.$text-secondary;
+  font-size: .72rem;
+}
+
+.chat-input__mic-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,.25);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: chat-input-spin .7s linear infinite;
+}
+
+@keyframes chat-input-spin {
+  to { transform: rotate(360deg); }
+}
+
+.chat-input__attachments {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.chat-input__attachment {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.chat-input__attachment .file-card {
+  flex: 1;
+}
+
+.chat-input__attachment-remove {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0,0,0,.35);
+  color: #fff;
+  cursor: pointer;
+}
+
+.chat-input__upload-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+  font-size: 12px;
+  opacity: .7;
+}
+
+.chat-input__left-actions,
+.chat-input__right-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-input__attach {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.chat-input__attach:hover:not(:disabled) {
+  background: rgba(255,255,255,.07);
+}
+
+.chat-input__spin {
+  animation: aether-spin 1s linear infinite;
+}
+
+@keyframes aether-spin {
+  to { transform: rotate(360deg); }
+}

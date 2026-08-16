@@ -1,0 +1,28 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.otp-input {
+  display: flex;
+  gap: v.$space-2;
+  justify-content: space-between;
+  margin-bottom: v.$space-4;
+
+  input {
+    @include m.glass(rgba(255, 255, 255, 0.05), v.$glass-border, 10px);
+    width: 100%;
+    aspect-ratio: 1;
+    text-align: center;
+    font-size: v.$fs-xl;
+    font-family: v.$font-mono;
+    font-weight: 700;
+    color: v.$text-primary;
+    border-radius: v.$radius-md;
+    outline: none;
+    transition: border-color v.$dur-base v.$ease-out, box-shadow v.$dur-base v.$ease-out;
+
+    &:focus {
+      border-color: var(--accent-solid, #{v.$c-blue});
+      box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.15);
+    }
+  }
+}

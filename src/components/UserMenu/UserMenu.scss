@@ -1,0 +1,128 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.user-menu {
+  position: relative;
+
+  &__trigger {
+    display: flex;
+    border-radius: v.$radius-full;
+    @include m.focus-ring;
+  }
+
+  &__panel {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 280px;
+    @include m.glass(v.$bg-elevated, v.$glass-border-strong, 28px);
+    border-radius: v.$radius-lg;
+    box-shadow: v.$shadow-lift;
+    padding: v.$space-3;
+    z-index: v.$z-header + 10;
+  }
+
+  &__identity {
+    @include m.flex(center, flex-start, v.$space-3);
+    padding: v.$space-2 v.$space-2 v.$space-3;
+    border-bottom: 1px solid v.$glass-border;
+    margin-bottom: v.$space-2;
+
+    div { display: flex; flex-direction: column; min-width: 0; }
+  }
+
+  &__name {
+    font-size: v.$fs-sm;
+    font-weight: 700;
+    color: v.$text-primary;
+    @include m.line-clamp(1);
+  }
+
+  &__email {
+    font-size: v.$fs-xs;
+    color: v.$text-muted;
+    @include m.line-clamp(1);
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__item {
+    @include m.flex(center, flex-start, v.$space-3);
+    padding: v.$space-2 v.$space-3;
+    border-radius: v.$radius-sm;
+    font-size: v.$fs-sm;
+    color: v.$text-secondary;
+    width: 100%;
+    text-align: left;
+
+    span {
+      display: flex;
+      font-size: 1.05rem;
+      color: v.$text-muted;
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: v.$text-primary;
+      span { color: var(--accent-solid); }
+    }
+
+    &--danger {
+      color: v.$color-danger;
+      span { color: v.$color-danger; }
+      &:hover { background: rgba(251, 113, 133, 0.1); color: v.$color-danger; }
+    }
+  }
+
+  &__divider {
+    height: 1px;
+    background: v.$glass-border;
+    margin: v.$space-2 0;
+  }
+
+  &__shortcuts {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    li {
+      @include m.flex(center, space-between);
+      padding: v.$space-2 0;
+      border-bottom: 1px solid v.$glass-border;
+      font-size: v.$fs-sm;
+
+      &:last-child { border-bottom: none; }
+    }
+
+    code {
+      font-family: v.$font-mono;
+      font-size: v.$fs-xs;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 3px 8px;
+      border-radius: v.$radius-sm;
+      color: v.$text-secondary;
+    }
+  }
+
+  &__workspaces {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-2;
+
+    button {
+      width: 100%;
+      text-align: left;
+      padding: v.$space-3;
+      border-radius: v.$radius-md;
+      @include m.glass;
+      font-size: v.$fs-sm;
+      color: v.$text-primary;
+      &:hover { border-color: var(--accent-solid); }
+    }
+  }
+}

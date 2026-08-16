@@ -1,0 +1,99 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: v.$space-4;
+
+  label {
+    font-size: v.$fs-sm;
+    font-weight: 600;
+    color: v.$text-secondary;
+  }
+
+  &__required {
+    color: v.$color-danger;
+    margin-left: 3px;
+  }
+
+  &__hint {
+    font-size: v.$fs-xs;
+    color: v.$text-muted;
+  }
+
+  &__error {
+    font-size: v.$fs-xs;
+    color: v.$color-danger;
+  }
+
+  &.has-error input,
+  &.has-error .text-input {
+    border-color: rgba(251, 113, 133, 0.6) !important;
+  }
+}
+
+.text-input,
+.form-field input[type='text'],
+.form-field input[type='email'],
+.form-field input[type='password'] {
+  @include m.glass(rgba(255, 255, 255, 0.05), v.$glass-border, 10px);
+  width: 100%;
+  padding: v.$space-3 v.$space-4;
+  border-radius: v.$radius-md;
+  color: v.$text-primary;
+  font-size: v.$fs-base;
+  outline: none;
+  transition: border-color v.$dur-base v.$ease-out, box-shadow v.$dur-base v.$ease-out;
+
+  &::placeholder { color: v.$text-muted; }
+
+  &:focus {
+    border-color: var(--accent-solid, #{v.$c-blue});
+    box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.15);
+  }
+}
+
+.checkbox-field {
+  @include m.flex(center, flex-start, v.$space-2);
+  font-size: v.$fs-sm;
+  color: v.$text-secondary;
+  cursor: pointer;
+  user-select: none;
+
+  input[type='checkbox'] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid v.$glass-border-strong;
+    background: rgba(255, 255, 255, 0.04);
+    flex-shrink: 0;
+    display: inline-grid;
+    place-content: center;
+    cursor: pointer;
+    transition: background v.$dur-fast v.$ease-out, border-color v.$dur-fast v.$ease-out;
+
+    &::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      transform: scale(0);
+      transition: transform v.$dur-fast v.$ease-out;
+      background: var(--accent-grad, #{v.$gradient-primary});
+    }
+
+    &:checked {
+      border-color: transparent;
+      &::before { transform: scale(1); }
+    }
+  }
+
+  a {
+    color: var(--accent-solid, #{v.$c-cyan});
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}

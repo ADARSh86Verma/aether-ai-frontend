@@ -1,0 +1,362 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.profile-page {
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  padding: v.$space-5 v.$space-6 v.$space-7;
+  max-width: 1100px;
+  margin: 0 auto;
+
+  @include m.respond(mobile) {
+    padding: v.$space-4 v.$space-3 v.$space-6;
+  }
+
+  &__header {
+    @include m.flex(center, flex-start, v.$space-3);
+    margin-bottom: v.$space-6;
+
+    h1 { font-size: v.$fs-2xl; @include m.gradient-text(var(--accent-grad-text, #{v.$gradient-text})); }
+  }
+
+  &__back {
+    width: 40px;
+    height: 40px;
+    border-radius: v.$radius-full;
+    @include m.glass;
+    @include m.flex(center, center);
+    color: v.$text-secondary;
+    flex-shrink: 0;
+    &:hover { color: v.$text-primary; }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-5;
+  }
+}
+
+.profile-hero {
+  @include m.glass;
+  border-radius: v.$radius-lg;
+  padding: v.$space-5;
+  @include m.flex(center, flex-start, v.$space-5);
+
+  @include m.respond(mobile) {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  &__avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: v.$radius-full;
+    background: var(--accent-grad);
+    @include m.flex(center, center);
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: var(--accent-glow);
+    overflow: hidden;
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+
+  &__camera {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: v.$radius-full;
+    background: v.$bg-elevated;
+    border: 2px solid v.$bg-base;
+    @include m.flex(center, center);
+    color: v.$text-primary;
+    font-size: 0.9rem;
+    &:hover { background: v.$bg-elevated-2; }
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+
+    h2 { font-size: v.$fs-xl; margin-bottom: 2px; }
+  }
+
+  &__username, &__email {
+    font-size: v.$fs-sm;
+    color: v.$text-secondary;
+  }
+
+  &__role {
+    display: inline-block;
+    margin-top: v.$space-2;
+    font-size: v.$fs-xs;
+    font-weight: 700;
+    color: var(--accent-solid);
+    background: rgba(255, 255, 255, 0.06);
+    padding: 3px 10px;
+    border-radius: v.$radius-full;
+  }
+
+  &__edit {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-2;
+    max-width: 320px;
+
+    input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid v.$glass-border;
+      border-radius: v.$radius-sm;
+      padding: v.$space-2 v.$space-3;
+      color: v.$text-primary;
+      font-size: v.$fs-sm;
+      outline: none;
+      &:focus { border-color: var(--accent-solid); }
+    }
+
+    &-actions { display: flex; gap: v.$space-2; }
+  }
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: v.$space-3;
+
+  @include m.respond(tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.stat-card {
+  @include m.glass;
+  border-radius: v.$radius-md;
+  padding: v.$space-4;
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-1;
+
+  &__icon {
+    color: var(--accent-solid);
+    font-size: 1.3rem;
+    margin-bottom: v.$space-1;
+  }
+
+  &__value {
+    font-size: v.$fs-xl;
+    font-weight: 700;
+    font-family: v.$font-display;
+  }
+
+  &__label {
+    font-size: v.$fs-xs;
+    color: v.$text-muted;
+  }
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: v.$space-4;
+
+  @include m.respond(tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-card {
+  @include m.glass;
+  border-radius: v.$radius-lg;
+  padding: v.$space-4 v.$space-5;
+
+  &__header {
+    @include m.flex(center, space-between);
+    margin-bottom: v.$space-2;
+
+    h3 { font-size: v.$fs-md; }
+  }
+
+  &__header-icon {
+    color: var(--accent-solid);
+    font-size: 1.2rem;
+  }
+
+  &__more {
+    font-size: v.$fs-xs;
+    color: var(--accent-solid, #{v.$c-cyan});
+    font-weight: 600;
+    margin-top: v.$space-2;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.profile-row {
+  @include m.flex(center, space-between);
+  padding: v.$space-3 0;
+  border-bottom: 1px solid v.$glass-border;
+  font-size: v.$fs-sm;
+  color: v.$text-primary;
+
+  &:last-of-type { border-bottom: none; }
+
+  &__provider {
+    @include m.flex(center, flex-start, v.$space-2);
+    svg { font-size: 1rem; }
+  }
+}
+
+.shortcut-combo {
+  font-family: v.$font-mono;
+  font-size: v.$fs-xs;
+  color: v.$text-secondary;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid v.$glass-border;
+  padding: 4px 10px;
+  border-radius: v.$radius-sm;
+  min-width: 90px;
+  text-align: center;
+
+  &:hover { border-color: var(--accent-solid); color: v.$text-primary; }
+  &.is-recording {
+    border-color: var(--accent-solid);
+    color: var(--accent-solid);
+    animation: pulse-glow 1.4s ease-in-out infinite;
+  }
+}
+
+.profile-danger {
+  @include m.glass(rgba(251, 113, 133, 0.05), rgba(251, 113, 133, 0.2));
+  border-radius: v.$radius-lg;
+  padding: v.$space-5;
+  @include m.flex(center, space-between, v.$space-4);
+
+  @include m.respond(mobile) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  h3 { font-size: v.$fs-md; color: v.$color-danger; margin-bottom: 4px; }
+  p { font-size: v.$fs-xs; color: v.$text-muted; max-width: 420px; }
+
+  &__actions {
+    display: flex;
+    gap: v.$space-2;
+    flex-shrink: 0;
+  }
+}
+
+.profile-delete-confirm {
+  width: 100%;
+  margin-top: v.$space-3;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid v.$glass-border;
+  border-radius: v.$radius-sm;
+  padding: v.$space-2 v.$space-3;
+  color: v.$text-primary;
+  font-size: v.$fs-sm;
+  outline: none;
+  &:focus { border-color: v.$color-danger; }
+}
+
+/* Route pages need their own scroll container because the global app shell
+   intentionally keeps the document viewport locked. */
+.profile-page {
+  height: 100dvh;
+  min-height: 100svh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding-bottom: calc(v.$space-8 + env(safe-area-inset-bottom));
+  @include m.custom-scrollbar;
+}
+
+@include m.respond(mobile) {
+  .profile-page {
+    height: 100dvh;
+    padding: 14px 12px calc(28px + env(safe-area-inset-bottom));
+
+    &__header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      margin: -14px -12px 16px;
+      padding: 10px 12px;
+      background: rgba(16,17,20,.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid v.$glass-border;
+
+      h1 { font-size: 1.25rem; }
+    }
+
+    &__body { gap: 12px; }
+  }
+
+  .profile-hero {
+    padding: 16px;
+    gap: 12px;
+
+    &__avatar { width: 76px; height: 76px; margin: 0 auto; }
+    &__info { text-align: center; }
+    &__edit { max-width: none; }
+    &__edit-actions { justify-content: center; }
+  }
+
+  .profile-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 12px;
+    min-width: 0;
+    &__value { font-size: 1.15rem; }
+    &__label { line-height: 1.3; }
+  }
+
+  .profile-grid { gap: 10px; }
+
+  .profile-card {
+    padding: 14px;
+    min-width: 0;
+  }
+
+  .profile-row {
+    gap: 10px;
+    align-items: flex-start;
+
+    > span:first-child { min-width: 0; line-height: 1.4; }
+
+    .btn { flex-shrink: 0; }
+  }
+
+  .profile-danger {
+    padding: 14px;
+    gap: 12px;
+
+    &__actions {
+      flex-direction: column;
+      width: 100%;
+      .btn { width: 100%; justify-content: center; }
+    }
+  }
+
+  .shortcut-combo {
+    min-width: 82px;
+    padding-inline: 7px;
+    font-size: .68rem;
+  }
+}

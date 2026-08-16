@@ -1,0 +1,148 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+
+// ---------------------------------------------------------------------------
+// Shared across Login / Signup / ForgotPassword pages
+// ---------------------------------------------------------------------------
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-4;
+
+  input[type='email'],
+  input[type='text'],
+  input[type='password'] {
+    inline-size: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid v.$glass-border;
+    border-radius: v.$radius-md;
+    padding: v.$space-3 v.$space-4;
+    color: v.$text-primary;
+    font-size: v.$fs-base;
+    outline: none;
+    transition: border-color v.$dur-fast v.$ease-out, background v.$dur-fast v.$ease-out;
+
+    &::placeholder { color: v.$text-muted; }
+    &:focus { border-color: var(--accent-solid); background: rgba(255, 255, 255, 0.07); }
+  }
+
+  &__row {
+    @include m.flex(center, space-between);
+    font-size: v.$fs-sm;
+  }
+
+  &__checkbox {
+    @include m.flex(center, flex-start, v.$space-2);
+    color: v.$text-secondary;
+    cursor: pointer;
+
+    input {
+      inline-size: 16px;
+      block-size: 16px;
+      accent-color: var(--accent-solid);
+    }
+  }
+
+  &__link {
+    color: var(--accent-solid, #{v.$c-cyan});
+    font-weight: 600;
+    &:hover { text-decoration: underline; }
+  }
+
+  &__error {
+    font-size: v.$fs-sm;
+    color: v.$color-danger;
+    background: rgba(251, 113, 133, 0.08);
+    border: 1px solid rgba(251, 113, 133, 0.25);
+    padding: v.$space-2 v.$space-3;
+    border-radius: v.$radius-sm;
+  }
+
+  &__submit {
+    inline-size: 100%;
+    margin-block-start: v.$space-1;
+  }
+
+  &__terms {
+    @include m.flex(flex-start, flex-start, v.$space-2);
+    font-size: v.$fs-xs;
+    color: v.$text-secondary;
+    line-height: 1.5;
+
+    input {
+      margin-block-start: 2px;
+      inline-size: 16px;
+      block-size: 16px;
+      flex-shrink: 0;
+      accent-color: var(--accent-solid);
+    }
+
+    a {
+      color: var(--accent-solid, #{v.$c-cyan});
+      font-weight: 600;
+      &:hover { text-decoration: underline; }
+    }
+  }
+}
+
+.auth-divider {
+  @include m.flex(center, center);
+  margin: v.$space-5 0;
+  color: v.$text-muted;
+  font-size: v.$fs-xs;
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    block-size: 1px;
+    background: v.$glass-border;
+  }
+
+  span {
+    padding: 0 v.$space-3;
+    white-space: nowrap;
+  }
+}
+
+.auth-switch {
+  text-align: center;
+  margin-block-start: v.$space-5;
+  font-size: v.$fs-sm;
+  color: v.$text-secondary;
+
+  a {
+    color: var(--accent-solid, #{v.$c-cyan});
+    font-weight: 700;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+// Segmented toggle used on the Login page (Email / Username)
+.login-mode-toggle {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: v.$radius-md;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid v.$glass-border;
+  margin-block-end: v.$space-5;
+
+  button {
+    flex: 1;
+    @include m.flex(center, center, v.$space-2);
+    padding: v.$space-2;
+    border-radius: v.$radius-sm;
+    font-size: v.$fs-sm;
+    font-weight: 600;
+    color: v.$text-muted;
+    transition: background v.$dur-fast v.$ease-out, color v.$dur-fast v.$ease-out;
+
+    &.is-active {
+      background: var(--accent-grad);
+      color: #fff;
+    }
+  }
+}

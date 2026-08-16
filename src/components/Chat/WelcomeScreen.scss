@@ -1,0 +1,119 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.welcome-screen {
+  width: min(100%, 760px);
+  min-height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 44px 18px 80px;
+  text-align: center;
+
+  &__mark {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 18px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: var(--accent-grad);
+    color: #fff;
+    box-shadow: var(--accent-glow);
+    flex-shrink: 0;
+  }
+
+  h1 {
+    max-width: 700px;
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.08;
+    margin-bottom: 12px;
+    color: v.$text-primary;
+  }
+
+  p {
+    color: v.$text-secondary;
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: .98rem;
+  }
+
+  &__suggestions {
+    width: min(100%, 660px);
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  &__chip {
+    min-width: 0;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-align: left;
+    border: 1px solid v.$glass-border;
+    background: rgba(255,255,255,.025);
+    border-radius: 14px;
+    padding: 12px 14px;
+    color: v.$text-secondary;
+    cursor: pointer;
+    line-height: 1.35;
+    transition: .2s ease;
+
+    span {
+      display: inline-flex;
+      flex-shrink: 0;
+      color: var(--accent-solid);
+      font-size: 1rem;
+    }
+
+    &:hover {
+      color: v.$text-primary;
+      border-color: rgba(126,140,255,.22);
+      background: rgba(126,140,255,.06);
+    }
+  }
+
+  @include m.respond(mobile) {
+    min-height: auto;
+    justify-content: flex-start;
+    padding: 54px 14px 100px;
+
+    &__mark {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      width: 100%;
+      font-size: clamp(2rem, 9vw, 2.55rem);
+      line-height: 1.08;
+      margin-bottom: 14px;
+    }
+
+    p {
+      width: 100%;
+      font-size: .93rem;
+      line-height: 1.65;
+    }
+
+    &__suggestions {
+      width: 100%;
+      margin-top: 26px;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    &__chip {
+      width: 100%;
+      min-height: 46px;
+      font-size: .84rem;
+      padding: 11px 12px;
+    }
+  }
+}

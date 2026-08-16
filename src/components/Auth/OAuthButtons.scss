@@ -1,0 +1,32 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.oauth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-2;
+
+  &__btn {
+    @include m.glass;
+    @include m.flex(center, center, v.$space-3);
+    width: 100%;
+    padding: v.$space-3;
+    border-radius: v.$radius-md;
+    font-size: v.$fs-sm;
+    font-weight: 600;
+    color: v.$text-primary;
+    @include m.hover-lift;
+
+    &:hover { background: v.$glass-bg-strong; border-color: v.$glass-border-strong; }
+    &:disabled { opacity: 0.6; cursor: wait; }
+  }
+
+  &__icon {
+    display: flex;
+    font-size: 1.05rem;
+
+    &--google { color: #ea4335; }
+    &--github { color: v.$text-primary; }
+    &--microsoft { color: #00a4ef; }
+  }
+}

@@ -1,0 +1,70 @@
+@use './variables' as v;
+
+@mixin respond($breakpoint) {
+  @if $breakpoint == desktop {
+    @media (max-width: v.$bp-desktop) { @content; }
+  } @else if $breakpoint == laptop {
+    @media (max-width: v.$bp-laptop) { @content; }
+  } @else if $breakpoint == tablet {
+    @media (max-width: v.$bp-tablet) { @content; }
+  } @else if $breakpoint == mobile {
+    @media (max-width: v.$bp-mobile) { @content; }
+  } @else if $breakpoint == small {
+    @media (max-width: v.$bp-small) { @content; }
+  }
+}
+
+@mixin glass($bg: v.$glass-bg, $border: v.$glass-border, $blur: 18px) {
+  background: $bg;
+  border: 1px solid $border;
+  backdrop-filter: blur($blur) saturate(120%);
+  -webkit-backdrop-filter: blur($blur) saturate(120%);
+  [data-theme='light'] & {
+    background: v.$light-glass-bg;
+    border-color: v.$light-glass-border;
+  }
+}
+
+@mixin gradient-text($gradient: var(--accent-grad-text, #{v.$gradient-text})) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@mixin custom-scrollbar($width: 7px) {
+  &::-webkit-scrollbar { width: $width; height: $width; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 999px; }
+  &::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.2); }
+}
+
+@mixin focus-ring {
+  &:focus-visible { outline: 2px solid var(--accent-solid); outline-offset: 2px; }
+}
+
+@mixin hover-lift {
+  transition: transform v.$dur-base v.$ease-out, box-shadow v.$dur-base v.$ease-out, background v.$dur-base v.$ease-out, border-color v.$dur-base v.$ease-out;
+  &:hover { transform: translateY(-1px); }
+}
+
+@mixin line-clamp($lines: 1) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@mixin flex($align: center, $justify: flex-start, $gap: 0) {
+  display: flex;
+  align-items: $align;
+  justify-content: $justify;
+  @if $gap != 0 { gap: $gap; }
+}
+
+@mixin respect-motion-preference {
+  @media (prefers-reduced-motion: reduce) {
+    animation: none !important;
+    transition: none !important;
+  }
+}

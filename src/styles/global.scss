@@ -1,0 +1,86 @@
+@use 'variables' as v;
+@use 'mixins' as m;
+@use 'animations';
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  color-scheme: dark;
+  --accent-grad: #{v.$gradient-primary};
+  --accent-grad-text: #{v.$gradient-text};
+  --accent-solid: #{v.$c-indigo};
+  --accent-glow: #{v.$shadow-glow-blue};
+
+  &[data-accent='purple'] {
+    --accent-grad: linear-gradient(135deg, #8378ff, #ab92ff);
+    --accent-grad-text: linear-gradient(90deg, #ddd9ff, #c9bcff);
+    --accent-solid: #8f82ff;
+    --accent-glow: 0 0 24px rgba(143,130,255,.15);
+  }
+  &[data-accent='cyan'] {
+    --accent-grad: linear-gradient(135deg, #67c4d7, #7d8cff);
+    --accent-grad-text: linear-gradient(90deg, #d0fbff, #c7d0ff);
+    --accent-solid: #76c8d9;
+    --accent-glow: 0 0 24px rgba(118,200,217,.14);
+  }
+  &[data-accent='green'] {
+    --accent-grad: linear-gradient(135deg, #7ecf9d, #6f91ff);
+    --accent-grad-text: linear-gradient(90deg, #d9ffe6, #d5ddff);
+    --accent-solid: #83ca9f;
+    --accent-glow: 0 0 24px rgba(131,202,159,.14);
+  }
+  &[data-accent='rose'] {
+    --accent-grad: linear-gradient(135deg, #df909c, #9b8cff);
+    --accent-grad-text: linear-gradient(90deg, #ffe0e4, #d9d1ff);
+    --accent-solid: #dc8f9a;
+    --accent-glow: 0 0 24px rgba(220,143,154,.13);
+  }
+  &[data-font-size='sm'] { font-size: 14px; }
+  &[data-font-size='md'] { font-size: 16px; }
+  &[data-font-size='lg'] { font-size: 18px; }
+
+  &[data-theme='light'] { color-scheme: light; }
+}
+
+body {
+  font-family: v.$font-body;
+  background: v.$bg-base;
+  color: v.$text-primary;
+  min-height: 100vh;
+  overflow: hidden;
+  line-height: 1.5;
+  transition: background v.$dur-slow v.$ease-out, color v.$dur-slow v.$ease-out;
+
+  [data-theme='light'] & {
+    background: v.$light-bg-base;
+    color: v.$light-text-primary;
+  }
+}
+
+button, input, textarea, select { font: inherit; }
+button { border: 0; background: none; color: inherit; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+textarea, input, select { min-width: 0; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+#root { width: 100%; min-height: 100vh; }
+
+h1, h2, h3, h4, h5, h6 { font-family: v.$font-display; font-weight: 650; letter-spacing: -.02em; }
+
+::selection { background: rgba(126, 140, 255, .25); }
+
+.aurora-backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: v.$gradient-aurora;
+  opacity: .95;
+}
+
+[data-theme='light'] .aurora-backdrop { opacity: .55; }
+
+
+@media (max-width: 768px) {
+  body { overflow-y: auto; }
+}

@@ -1,0 +1,25 @@
+@use '../../styles/variables' as v;
+
+.create-file {
+  display: grid;
+  gap: 9px;
+  color: v.$text-secondary;
+
+  &__hint { color: v.$text-muted; font-size: .82rem; margin-bottom: 4px; }
+  label { color: v.$text-primary; font-size: .78rem; font-weight: 650; }
+
+  textarea, input {
+    width: 100%;
+    border: 1px solid v.$glass-border;
+    border-radius: 12px;
+    background: rgba(255,255,255,.04);
+    color: v.$text-primary;
+    outline: 0;
+    padding: 11px 12px;
+    resize: vertical;
+    &:focus { border-color: rgba(126,140,255,.55); box-shadow: 0 0 0 3px rgba(126,140,255,.08); }
+  }
+
+  textarea { min-height: 150px; }
+  &__error { color: v.$color-danger; font-size: .78rem; }
+}

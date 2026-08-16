@@ -1,0 +1,42 @@
+@use '../../styles/auth-shared';
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.verify-panel {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__icon {
+    width: 64px;
+    height: 64px;
+    border-radius: v.$radius-lg;
+    background: var(--accent-grad);
+    @include m.flex(center, center);
+    font-size: 1.8rem;
+    color: #fff;
+    box-shadow: var(--accent-glow);
+    margin-bottom: v.$space-4;
+  }
+
+  p {
+    color: v.$text-secondary;
+    font-size: v.$fs-sm;
+    line-height: 1.6;
+    margin-bottom: v.$space-5;
+  }
+
+  &__submit {
+    width: 100%;
+    margin-bottom: v.$space-3;
+  }
+
+  &__resend {
+    font-size: v.$fs-sm;
+    color: var(--accent-solid, #{v.$c-cyan});
+    font-weight: 600;
+    &:hover { text-decoration: underline; }
+    &:disabled { color: v.$text-muted; cursor: default; }
+  }
+}

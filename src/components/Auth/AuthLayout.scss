@@ -1,0 +1,146 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.auth-layout {
+  min-height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+
+  @include m.respond(laptop) {
+    grid-template-columns: 0.85fr 1.15fr;
+  }
+
+  @include m.respond(tablet) {
+    grid-template-columns: 1fr;
+  }
+
+  &__panel {
+    position: relative;
+    z-index: 1;
+    @include m.flex(center, center);
+    padding: v.$space-7;
+
+    @include m.respond(mobile) {
+      padding: v.$space-5 v.$space-4;
+    }
+  }
+
+  &__panel--brand {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    border-right: 1px solid v.$glass-border;
+
+    @include m.respond(tablet) {
+      display: none;
+    }
+
+    > div {
+      max-width: 420px;
+    }
+  }
+
+  &__panel--form {
+    min-height: 100%;
+    align-items: flex-start;
+    padding-top: max(v.$space-6, 6vh);
+    padding-bottom: max(v.$space-6, 6vh);
+
+    @include m.respond(tablet) {
+      padding: v.$space-6 v.$space-4;
+      align-items: flex-start;
+    }
+
+    @include m.respond(mobile) {
+      padding: v.$space-5 v.$space-3;
+    }
+  }
+
+  &__mark {
+    width: 56px;
+    height: 56px;
+    border-radius: v.$radius-lg;
+    background: var(--accent-grad, #{v.$gradient-primary});
+    @include m.flex(center, center);
+    font-size: 1.6rem;
+    color: #fff;
+    box-shadow: var(--accent-glow, #{v.$shadow-glow-blue});
+    margin-bottom: v.$space-5;
+  }
+
+  h1 {
+    font-size: v.$fs-3xl;
+    @include m.gradient-text(var(--accent-grad-text, #{v.$gradient-text}));
+    margin-bottom: v.$space-3;
+  }
+
+  &__tagline {
+    font-size: v.$fs-md;
+    color: v.$text-secondary;
+    margin-bottom: v.$space-6;
+    max-width: 340px;
+  }
+
+  &__features {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-3;
+
+    li {
+      @include m.flex(center, flex-start, v.$space-3);
+      color: v.$text-secondary;
+      font-size: v.$fs-sm;
+
+      &::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: v.$radius-full;
+        background: var(--accent-solid, #{v.$c-cyan});
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  &__form-card {
+    @include m.glass(v.$glass-bg-strong, v.$glass-border-strong, 28px);
+    width: 100%;
+    max-width: 420px;
+    border-radius: v.$radius-xl;
+    padding: v.$space-6;
+    box-shadow: v.$shadow-lift;
+
+    @include m.respond(mobile) {
+      padding: v.$space-5;
+      border-radius: v.$radius-lg;
+    }
+
+    h2 {
+      font-size: v.$fs-xl;
+      margin-bottom: v.$space-2;
+    }
+  }
+
+  &__eyebrow {
+    display: inline-block;
+    font-size: v.$fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-solid, #{v.$c-cyan});
+    margin-bottom: v.$space-2;
+  }
+
+  &__subtitle {
+    color: v.$text-secondary;
+    font-size: v.$fs-sm;
+    margin-bottom: v.$space-5;
+  }
+}
+
+.auth-layout { background: radial-gradient(circle at 50% 0%, rgba(111,124,248,.10), transparent 35%), #101114; }

@@ -1,0 +1,50 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.toast-stack {
+  position: fixed;
+  bottom: v.$space-5;
+  right: v.$space-5;
+  z-index: v.$z-toast;
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-2;
+  max-width: min(360px, calc(100vw - #{v.$space-5} * 2));
+
+  @include m.respond(mobile) {
+    left: v.$space-4;
+    right: v.$space-4;
+    bottom: v.$space-4;
+    max-width: none;
+  }
+}
+
+.toast {
+  @include m.glass(v.$bg-elevated, v.$glass-border-strong, 24px);
+  @include m.flex(center, flex-start, v.$space-3);
+  padding: v.$space-3 v.$space-4;
+  border-radius: v.$radius-md;
+  box-shadow: v.$shadow-lift;
+  font-size: v.$fs-sm;
+
+  &__icon {
+    display: flex;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  &__message {
+    flex: 1;
+    color: v.$text-primary;
+  }
+
+  &__close {
+    color: v.$text-muted;
+    display: flex;
+    &:hover { color: v.$text-primary; }
+  }
+
+  &--success .toast__icon { color: v.$color-success; }
+  &--error .toast__icon { color: v.$color-danger; }
+  &--info .toast__icon { color: v.$c-cyan; }
+}

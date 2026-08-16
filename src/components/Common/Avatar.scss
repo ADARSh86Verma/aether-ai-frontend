@@ -1,0 +1,29 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.avatar {
+  @include m.flex(center, center);
+  border-radius: v.$radius-full;
+  flex-shrink: 0;
+  font-family: v.$font-display;
+  font-weight: 700;
+  font-size: 0.9rem;
+
+  &--ai {
+    background: var(--accent-grad, #{v.$gradient-primary});
+    color: #fff;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06), v.$shadow-glow-purple;
+    font-size: 1rem;
+  }
+
+  &--user {
+    background: v.$bg-elevated-2;
+    color: v.$text-primary;
+    border: 1px solid v.$glass-border;
+
+    [data-theme='light'] & {
+      background: #e4e8ff;
+      color: v.$light-text-primary;
+    }
+  }
+}

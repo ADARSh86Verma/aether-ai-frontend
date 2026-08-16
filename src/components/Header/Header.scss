@@ -1,0 +1,154 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.app-header {
+  height: v.$header-height;
+  flex: 0 0 v.$header-height;
+  @include m.glass(rgba(16,17,20,.86), v.$glass-border, 18px);
+  @include m.flex(center, space-between, 12px);
+  padding: 0 18px;
+  position: relative;
+  z-index: v.$z-header;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  box-shadow: 0 1px 0 rgba(255,255,255,.03);
+
+  &__left,
+  &__right,
+  &__brand { @include m.flex(center, flex-start, 10px); }
+
+  &__left { min-width: 0; flex: 1; }
+  &__right { flex-shrink: 0; justify-content: flex-end; }
+  &__brand { min-width: 0; }
+
+  &__burger {
+    display: none;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 10px;
+    color: v.$text-secondary;
+    background: transparent;
+    cursor: pointer;
+    @include m.focus-ring;
+
+    &:hover { background: rgba(255,255,255,.05); color: v.$text-primary; }
+  }
+
+  &__logo {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: var(--accent-grad);
+    box-shadow: var(--accent-glow);
+    flex-shrink: 0;
+  }
+
+  &__name {
+    font-family: v.$font-display;
+    font-size: 1rem;
+    font-weight: 700;
+    color: v.$text-primary;
+    letter-spacing: -.03em;
+    flex-shrink: 0;
+  }
+
+  &__model-picker,
+  &__mode-picker { flex-shrink: 0; }
+
+  &__model-select,
+  &__mode-select {
+    height: 34px;
+    border: 1px solid v.$glass-border;
+    border-radius: v.$radius-full;
+    padding: 0 12px;
+    background: rgba(255,255,255,.04);
+    color: v.$text-primary;
+    font-size: .78rem;
+    font-weight: 600;
+    outline: 0;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease;
+
+    &:hover,
+    &:focus {
+      border-color: rgba(126,140,255,.5);
+      background: rgba(255,255,255,.06);
+    }
+
+    option { background: #191b1f; color: #fff; }
+  }
+
+  &__model-select { min-width: 148px; }
+  &__mode-select { min-width: 112px; }
+
+  &__btn-text { @include m.respond(mobile) { display: none; } }
+
+  @include m.respond(tablet) {
+    &__burger { display: grid; }
+    &__name { display: none; }
+    &__model-select { min-width: 132px; }
+  }
+
+  @include m.respond(mobile) {
+    height: 56px;
+    flex-basis: 56px;
+    padding: 0 10px;
+    gap: 6px;
+
+    &__left { min-width: 0; }
+    &__brand { min-width: 0; gap: 7px; overflow: hidden; }
+    &__logo { width: 29px; height: 29px; }
+    &__name { display: none; }
+
+    // On phones the mode selector moves into the slide-out sidebar.
+    &__mode-picker,
+    &__right > .tooltip-wrap:nth-child(2),
+    &__right > .tooltip-wrap:nth-child(3),
+    &__right > .tooltip-wrap:nth-child(4) {
+      display: none;
+    }
+
+    &__model-picker { min-width: 0; }
+    &__model-select {
+      min-width: 108px;
+      max-width: 126px;
+      height: 34px;
+      padding: 0 9px;
+      font-size: .73rem;
+    }
+
+    &__right {
+      gap: 3px;
+    }
+
+    &__right > .tooltip-wrap:first-child .btn--glass {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+    }
+
+    // The profile avatar remains available on the compact header.
+    &__right .user-menu__trigger { width: 34px; height: 34px; }
+  }
+
+  @include m.respond(small) {
+    padding: 0 7px;
+
+    &__model-select {
+      min-width: 96px;
+      max-width: 112px;
+      font-size: .7rem;
+    }
+
+    &__right .user-menu__trigger { width: 32px; height: 32px; }
+  }
+}

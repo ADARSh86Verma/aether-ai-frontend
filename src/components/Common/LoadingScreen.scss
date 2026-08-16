@@ -1,0 +1,22 @@
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
+
+.loading-screen {
+  height: 100%;
+  width: 100%;
+  @include m.flex(center, center);
+  flex-direction: column;
+  gap: v.$space-4;
+  color: v.$text-secondary;
+  font-size: v.$fs-sm;
+
+  &__mark {
+    width: 42px;
+    height: 42px;
+    border-radius: v.$radius-full;
+    border: 3px solid transparent;
+    border-top-color: v.$c-blue;
+    border-right-color: v.$c-purple;
+    border-bottom-color: v.$c-cyan;
+  }
+}
