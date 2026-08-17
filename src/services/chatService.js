@@ -58,17 +58,17 @@ export async function streamMessage(
   fileIds = [],
   signal
 ) {
+  const token =
+    localStorage.getItem("aether-auth-token") ||
+    sessionStorage.getItem("aether-auth-token");
+
   const response = await fetch(
     `${api.defaults.baseURL}/chat/stream`,
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(localStorage.getItem("aether-auth-token")
-          ? { Authorization: `Bearer ${localStorage.getItem("aether-auth-token")}` }
-          : sessionStorage.getItem("aether-auth-token")
-            ? { Authorization: `Bearer ${sessionStorage.getItem("aether-auth-token")}` }
-            : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({
         chat_id: chatId,
@@ -82,7 +82,18 @@ export async function streamMessage(
   );
 
   if (!response.ok) {
-    throw new Error("Streaming failed");
+    let detail = `Streaming failed (${response.status})`;
+    try {
+      const errorBody = await response.json();
+      detail = errorBody?.detail || detail;
+    } catch {
+      // Ignore non-JSON error bodies.
+    }
+    throw new Error(detail);
+  }
+
+  if (!response.body) {
+    throw new Error("Backend returned an empty streaming response.");
   }
 
   const reader = response.body.getReader();

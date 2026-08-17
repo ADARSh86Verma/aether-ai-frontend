@@ -46,14 +46,23 @@ export function ChatProvider({ children }) {
       try {
        const data = await getConversations();
 
-        const formatted = data.conversations.map((c) => ({
-          id: c.id,
-          title: c.title,
-          favorite: c.favorite,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          messages: [],
-        }));
+        // The backend may return an error object, null, or a response without
+        // conversations when the API/proxy is temporarily unavailable. Never
+        // call .map() on an untrusted API value.
+        const rawConversations = Array.isArray(data?.conversations)
+          ? data.conversations
+          : [];
+
+        const formatted = rawConversations
+          .filter(Boolean)
+          .map((c) => ({
+            id: c.id || generateId("chat"),
+            title: c.title || "New Chat",
+            favorite: Boolean(c.favorite),
+            createdAt: c.created_at ? new Date(c.created_at) : new Date(),
+            updatedAt: c.updated_at ? new Date(c.updated_at) : new Date(),
+            messages: [],
+          }));
 
         setConversations(formatted);
 
@@ -63,10 +72,15 @@ export function ChatProvider({ children }) {
 
           const created = await createConversation();
 
+          const conversation = created?.conversation;
+          if (!conversation?.id) {
+            throw new Error("Backend did not return a conversation id.");
+          }
+
           const chat = {
-              id: created.conversation.id,
-              title: created.conversation.title,
-              favorite: created.conversation.favorite,
+              id: conversation.id,
+              title: conversation.title || "New Chat",
+              favorite: Boolean(conversation.favorite),
               createdAt: new Date(),
               updatedAt: new Date(),
               messages: [],
@@ -112,10 +126,15 @@ export function ChatProvider({ children }) {
       const data = await createConversation();
       console.log("CREATE CONVERSATION:", data);
 
+      const conversation = data?.conversation;
+      if (!conversation?.id) {
+        throw new Error("Backend did not return a conversation id.");
+      }
+
       const chat = {
-        id: data.conversation.id,
-        title: data.conversation.title,
-        favorite: data.conversation.favorite,
+        id: conversation.id,
+        title: conversation.title || "New Chat",
+        favorite: Boolean(conversation.favorite),
         createdAt: new Date(),
         updatedAt: new Date(),
         messages: [],

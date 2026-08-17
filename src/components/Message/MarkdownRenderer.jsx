@@ -237,6 +237,19 @@ export default function MarkdownRenderer({
 
 
           /* -----------------------------------------------
+             Fenced code block wrapper
+
+             react-markdown can otherwise place a custom block
+             renderer inside a paragraph/list item. Returning the
+             block directly keeps the DOM valid and removes the
+             <pre> inside <p> warning.
+             ----------------------------------------------- */
+
+          pre({ children }) {
+            return <>{children}</>;
+          },
+
+          /* -----------------------------------------------
              Links
              ----------------------------------------------- */
 

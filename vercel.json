@@ -1,5 +1,16 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/api/:path*",
+      "destination": "https://facial-length-sodium-arm.trycloudflare.com/:path*"
+    },
+    {
+      "source": "/media/:path*",
+      "destination": "https://facial-length-sodium-arm.trycloudflare.com/media/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
