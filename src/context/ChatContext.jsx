@@ -105,13 +105,37 @@ export function ChatProvider({ children }) {
   );
 
   const newChat = useCallback(async () => {
-    const created = await createConversation();
-    const chat = normalizeConversation(created);
-    if (!chat?.id) throw new Error("Backend did not return a conversation id.");
-    setConversations(prev => [chat, ...prev.filter(c => c.id !== chat.id)]);
+  console.log("New Chat clicked");
+
+  try {
+    const data = await createConversation();
+
+    console.log("CREATE CONVERSATION:", data);
+
+    if (!data?.conversation?.id) {
+      throw new Error("Server did not return a valid conversation ID.");
+    }
+
+    const chat = {
+      id: data.conversation.id,
+      title: data.conversation.title || "New Chat",
+      favorite: Boolean(data.conversation.favorite),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      messages: [],
+    };
+
+    setConversations((prev) => [chat, ...prev]);
     setActiveId(chat.id);
+
     return chat.id;
-  }, []);
+
+  } catch (err) {
+    console.error("New Chat Error:", err);
+
+    throw err;
+  }
+}, []);
 
   const openChat = useCallback(async chatId => {
     if (!chatId) return;
