@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://facial-length-sodium-arm.trycloudflare.com/:path*"
+      "destination": "https://homeless-technological-accompanying-floral.trycloudflare.com/:path*"
     },
     {
       "source": "/media/:path*",
-      "destination": "https://facial-length-sodium-arm.trycloudflare.com/media/:path*"
+      "destination": "https://homeless-technological-accompanying-floral.trycloudflare.com/media/:path*"
     },
     {
       "source": "/(.*)",
