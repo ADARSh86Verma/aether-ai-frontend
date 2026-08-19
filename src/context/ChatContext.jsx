@@ -1,587 +1,293 @@
 import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
+  createContext, useCallback, useContext, useEffect, useMemo, useRef, useState,
 } from "react";
-
 import {
-  createConversation,
-  getConversation,
-  getConversations,
-  deleteConversation as deleteConversationApi,
-  renameConversation,
-  favoriteConversation,
+  createConversation, getConversation, getConversations,
+  deleteConversation as deleteConversationApi, renameConversation, favoriteConversation,
 } from "../services/conversationService";
-
 import { generateId } from "../utils/formatTime";
-import {
-  sendMessage,
-  streamMessage,
-} from "../services/chatService";
+import { streamMessage } from "../services/chatService";
 
 const ChatContext = createContext(null);
-
 const MODEL_NAME = "Aether-1 Coder";
+
+function normalizeMessage(message) {
+  if (!message) return null;
+  return {
+    ...message,
+    id: message.id || message._id || generateId("msg"),
+    role: message.role === "user" ? "user" : "assistant",
+    content: typeof message.content === "string" ? message.content : "",
+    createdAt: message.createdAt || message.created_at || new Date(),
+    attachments: Array.isArray(message.attachments) ? message.attachments.filter(Boolean) : [],
+    streaming: Boolean(message.streaming),
+  };
+}
+
+function normalizeConversation(value) {
+  if (!value) return null;
+  return {
+    id: value.id || value._id || null,
+    title: value.title || "New Chat",
+    favorite: Boolean(value.favorite),
+    createdAt: value.createdAt || value.created_at || new Date(),
+    updatedAt: value.updatedAt || value.updated_at || new Date(),
+    messages: Array.isArray(value.messages)
+      ? value.messages.map(normalizeMessage).filter(Boolean) : [],
+  };
+}
 
 export function ChatProvider({ children }) {
   const [conversations, setConversations] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [selectedModel, setSelectedModel] = useState("qwen3:8b");
-  const [selectedMode, setSelectedMode] =useState("chat");
+  const [selectedMode, setSelectedMode] = useState("chat");
   const [isStreaming, setIsStreaming] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
-
   const abortRef = useRef(null);
 
-  /* ----------------------------- */
-  /* Load Conversations            */
-  /* ----------------------------- */
-
-  useEffect(() => {
-    async function loadChats() {
-      try {
-       const data = await getConversations();
-
-        // The backend may return an error object, null, or a response without
-        // conversations when the API/proxy is temporarily unavailable. Never
-        // call .map() on an untrusted API value.
-        const rawConversations = Array.isArray(data?.conversations)
-          ? data.conversations
-          : [];
-
-        const formatted = rawConversations
-          .filter(Boolean)
-          .map((c) => ({
-            id: c.id || generateId("chat"),
-            title: c.title || "New Chat",
-            favorite: Boolean(c.favorite),
-            createdAt: c.created_at ? new Date(c.created_at) : new Date(),
-            updatedAt: c.updated_at ? new Date(c.updated_at) : new Date(),
-            messages: [],
-          }));
-
-        setConversations(formatted);
-
-        if (formatted.length) {
-          setActiveId(formatted[0].id);
-        } else {
-
-          const created = await createConversation();
-
-          const conversation = created?.conversation;
-          if (!conversation?.id) {
-            throw new Error("Backend did not return a conversation id.");
-          }
-
-          const chat = {
-              id: conversation.id,
-              title: conversation.title || "New Chat",
-              favorite: Boolean(conversation.favorite),
-              createdAt: new Date(),
-              updatedAt: new Date(),
-              messages: [],
-          };
-
-          setConversations([chat]);
-          setActiveId(chat.id);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    loadChats();
-  }, []);
-
-  /* ----------------------------- */
-  /* Active Conversation           */
-  /* ----------------------------- */
-
-  const activeConversation = useMemo(() => {
-    return conversations.find((c) => c.id === activeId) || null;
-  }, [conversations, activeId]);
-
-  /* ----------------------------- */
-  /* Update Conversation           */
-  /* ----------------------------- */
-
   const updateConversation = useCallback((id, updater) => {
-    setConversations((prev) =>
-      prev.map((c) => (c.id === id ? updater(c) : c))
-    );
+    if (!id) return;
+    setConversations(prev => prev.map(c => c.id === id ? updater(c) : c));
   }, []);
-
-  /* ----------------------------- */
-  /* New Chat                      */
-  /* ----------------------------- */
-
-  const newChat = useCallback(async () => {
-  console.log("newChat called");
-
-    try {
-      const data = await createConversation();
-      console.log("CREATE CONVERSATION:", data);
-
-      const conversation = data?.conversation;
-      if (!conversation?.id) {
-        throw new Error("Backend did not return a conversation id.");
-      }
-
-      const chat = {
-        id: conversation.id,
-        title: conversation.title || "New Chat",
-        favorite: Boolean(conversation.favorite),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        messages: [],
-      };
-
-      setConversations((prev) => [chat, ...prev]);
-      setActiveId(chat.id);
-
-      return chat.id;
-    } catch (err) {
-      console.error(err);
-    }
-  }, []);
-
-  /* ----------------------------- */
-  /* Open Chat                     */
-  /* ----------------------------- */
-
-  const openChat = useCallback(async (chatId) => {
-    try {
-      const data = await getConversation(chatId);
-      console.log("GET CONVERSATION:", data);
-
-      const messages = Array.isArray(data.messages)
-        ? data.messages.filter(Boolean).map((message) => ({
-            ...message,
-            id: message.id || generateId("msg"),
-            content: typeof message.content === "string" ? message.content : "",
-            attachments: Array.isArray(message.attachments)
-              ? message.attachments.filter(Boolean)
-              : [],
-          }))
-        : [];
-
-      updateConversation(chatId, (old) => ({
-        ...old,
-        messages,
-      }));
-
-      setActiveId(chatId);
-    } catch (err) {
-      console.error(err);
-    }
-  }, [updateConversation]);
-
-  /* ----------------------------- */
-  /* Delete Chat                   */
-  /* ----------------------------- */
-
-  const deleteChat = useCallback(async (id) => {
-    try {
-      await deleteConversationApi(id);
-
-      setConversations((prev) => {
-        const next = prev.filter((c) => c.id !== id);
-
-        if (next.length) {
-          setActiveId(next[0].id);
-        } else {
-          setActiveId(null);
-        }
-
-        return next;
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }, []);
-
-  /* ----------------------------- */
-  /* Rename                        */
-  /* ----------------------------- */
-
-  const renameChat = useCallback(async (id, title) => {
-    try {
-      await renameConversation(id, title);
-
-      updateConversation(id, (c) => ({
-        ...c,
-        title,
-      }));
-    } catch (err) {
-      console.error(err);
-    }
-  }, [updateConversation]);
-
-  /* ----------------------------- */
-  /* Favorite                      */
-  /* ----------------------------- */
-
-  const toggleFavorite = useCallback(async (id) => {
-    const chat = conversations.find((c) => c.id === id);
-    if (!chat) return;
-
-    const nextFavorite = !chat.favorite;
-
-    try {
-      await favoriteConversation(id, nextFavorite);
-
-      updateConversation(id, (c) => ({
-        ...c,
-        favorite: nextFavorite,
-      }));
-    } catch (err) {
-      console.error(err);
-    }
-  }, [conversations, updateConversation]);
-
-  /* ----------------------------- */
-  /* Append Message                */
-  /* ----------------------------- */
 
   const appendMessage = useCallback((chatId, message) => {
-    if (!message) return;
-
-    const safeMessage = {
-      ...message,
-      id: message.id || generateId("msg"),
-      content: typeof message.content === "string" ? message.content : "",
-      attachments: Array.isArray(message.attachments)
-        ? message.attachments.filter(Boolean)
-        : [],
-    };
-
-    updateConversation(chatId, (c) => ({
+    const safe = normalizeMessage(message);
+    if (!chatId || !safe) return;
+    updateConversation(chatId, c => ({
       ...c,
-      messages: [
-        ...(Array.isArray(c.messages) ? c.messages : []),
-        safeMessage,
-      ],
+      messages: [...(Array.isArray(c.messages) ? c.messages : []), safe],
       updatedAt: new Date(),
-      title:
-        c.title === "New Chat" &&
-        safeMessage.role === "user" &&
-        safeMessage.content
-          ? safeMessage.content.slice(0, 40)
-          : c.title,
+      title: c.title === "New Chat" && safe.role === "user" && safe.content
+        ? safe.content.slice(0, 40) : c.title,
     }));
   }, [updateConversation]);
 
-  /* ----------------------------- */
-  /* Patch Last                    */
-  /* ----------------------------- */
-
   const patchLastMessage = useCallback((chatId, updater) => {
-    updateConversation(chatId, (c) => {
-      if (!c.messages.length) return c;
-
-      const messages = [...c.messages];
-
-      messages[messages.length - 1] = {
-        ...messages[messages.length - 1],
-        ...updater(messages[messages.length - 1]),
-      };
-
-      return {
-        ...c,
-        messages,
-      };
+    updateConversation(chatId, c => {
+      const messages = Array.isArray(c.messages) ? [...c.messages] : [];
+      if (!messages.length) return c;
+      const current = messages[messages.length - 1] || normalizeMessage({});
+      messages[messages.length - 1] = normalizeMessage({ ...current, ...updater(current) });
+      return { ...c, messages, updatedAt: new Date() };
     });
   }, [updateConversation]);
 
-  /* ----------------------------- */
-  /* Stop                          */
-  /* ----------------------------- */
+  useEffect(() => {
+    let cancelled = false;
+    async function loadChats() {
+      try {
+        const data = await getConversations();
+        if (cancelled) return;
+        const formatted = data.map(normalizeConversation).filter(c => c?.id);
+        if (formatted.length) {
+          setConversations(formatted);
+          setActiveId(formatted[0].id);
+          return;
+        }
+        const created = await createConversation();
+        if (cancelled) return;
+        const chat = normalizeConversation(created);
+        if (!chat?.id) throw new Error("Unable to create the first conversation.");
+        setConversations([chat]);
+        setActiveId(chat.id);
+      } catch (err) {
+        if (!cancelled) console.error("[LOAD CONVERSATIONS ERROR]", err);
+      }
+    }
+    loadChats();
+    return () => { cancelled = true; };
+  }, []);
+
+  const activeConversation = useMemo(
+    () => conversations.find(c => c.id === activeId) || null,
+    [conversations, activeId]
+  );
+
+  const newChat = useCallback(async () => {
+    const created = await createConversation();
+    const chat = normalizeConversation(created);
+    if (!chat?.id) throw new Error("Backend did not return a conversation id.");
+    setConversations(prev => [chat, ...prev.filter(c => c.id !== chat.id)]);
+    setActiveId(chat.id);
+    return chat.id;
+  }, []);
+
+  const openChat = useCallback(async chatId => {
+    if (!chatId) return;
+    const data = await getConversation(chatId);
+    const messages = Array.isArray(data.messages)
+      ? data.messages.map(normalizeMessage).filter(Boolean) : [];
+    updateConversation(chatId, old => ({
+      ...old,
+      id: old?.id || data.id || chatId,
+      title: data.title || old?.title || "New Chat",
+      favorite: data.favorite ?? old?.favorite ?? false,
+      createdAt: data.createdAt || old?.createdAt || new Date(),
+      updatedAt: data.updatedAt || old?.updatedAt || new Date(),
+      messages,
+    }));
+    setActiveId(chatId);
+  }, [updateConversation]);
+
+  const deleteChat = useCallback(async id => {
+    if (!id) return;
+    await deleteConversationApi(id);
+    setConversations(prev => {
+      const next = prev.filter(c => c.id !== id);
+      setActiveId(current => current === id ? (next[0]?.id || null) : current);
+      return next;
+    });
+  }, []);
+
+  const renameChat = useCallback(async (id, title) => {
+    const clean = String(title || "").trim();
+    if (!id || !clean) return;
+    await renameConversation(id, clean);
+    updateConversation(id, c => ({ ...c, title: clean, updatedAt: new Date() }));
+  }, [updateConversation]);
+
+  const toggleFavorite = useCallback(async id => {
+    const chat = conversations.find(c => c.id === id);
+    if (!chat) return;
+    const next = !chat.favorite;
+    await favoriteConversation(id, next);
+    updateConversation(id, c => ({ ...c, favorite: next, updatedAt: new Date() }));
+  }, [conversations, updateConversation]);
 
   const stopResponse = useCallback(() => {
     abortRef.current?.abort();
     abortRef.current = null;
     setIsStreaming(false);
     setIsThinking(false);
-
-    if (activeId) {
-      patchLastMessage(activeId, () => ({
-        streaming: false,
-      }));
-    }
+    if (activeId) patchLastMessage(activeId, () => ({ streaming: false }));
   }, [activeId, patchLastMessage]);
 
-  /* ----------------------------- */
-  /* Stream Reply                  */
-  /* ----------------------------- */
+  const sendUserMessage = useCallback(async (text, attachments = []) => {
+    const safeText = String(text ?? "").trim();
+    const safeAttachments = Array.isArray(attachments) ? attachments.filter(Boolean) : [];
+    if ((!safeText && !safeAttachments.length) || !activeId) return;
 
-  const streamReply = useCallback(async (chatId, reply) => {
-    const controller = new AbortController();
-
-    abortRef.current = controller;
+    const chatId = activeId;
+    const messageText = safeText || "Please analyze the attached file(s).";
+    const fileIds = safeAttachments.map(file => file?.id).filter(Boolean);
 
     appendMessage(chatId, {
-      id: generateId("msg"),
-      role: "assistant",
-      model: MODEL_NAME,
-      content: "",
-      createdAt: new Date(),
-      streaming: true,
+      role: "user", content: messageText, createdAt: new Date(),
+      model: selectedModel, attachments: safeAttachments,
+    });
+    appendMessage(chatId, {
+      role: "assistant", content: "", createdAt: new Date(),
+      model: selectedModel, streaming: true,
     });
 
+    const controller = new AbortController();
+    abortRef.current = controller;
     setIsThinking(true);
-
-    await new Promise((r) => setTimeout(r, 400));
-
-    if (controller.signal.aborted) return;
-
-    setIsThinking(false);
     setIsStreaming(true);
 
-    const words = String(reply).split(/(\s+)/);
-
-    for (const word of words) {
-      if (controller.signal.aborted) break;
-
-      await new Promise((r) => setTimeout(r, 15));
-
-      patchLastMessage(chatId, (last) => ({
-        content: last.content + word,
-      }));
-    }
-
-    patchLastMessage(chatId, () => ({
-      streaming: false,
-    }));
-
-    setIsStreaming(false);
-  }, [appendMessage, patchLastMessage]);
-
-  // ===== Part 2 starts here =====
-
-  /* ----------------------------- */
-  /* Clear Chat                    */
-  /* ----------------------------- */
-
-  const clearChat = useCallback(() => {
-    if (!activeConversation) return;
-
-    updateConversation(activeId, (c) => ({
-      ...c,
-      messages: [],
-      updatedAt: new Date(),
-    }));
-  }, [activeConversation, activeId, updateConversation]);
-
-  /* ----------------------------- */
-  /* Send User Message             */
-  /* ----------------------------- */
-
-  const sendUserMessage = useCallback(
-    async (text, attachments = []) => {
-      const safeText = String(text ?? "").trim();
-      const safeAttachments = Array.isArray(attachments)
-        ? attachments.filter(Boolean)
-        : [];
-
-      if (!safeText && safeAttachments.length === 0) return;
-      if (!activeId) return;
-
-      const chatId = activeId;
-
-      appendMessage(chatId, {
-        id: generateId("msg"),
-        role: "user",
-        content: safeText || "Please analyze the attached file(s).",
-        createdAt: new Date(),
-        model: selectedModel,
-        attachments: safeAttachments,
-      });
-
-      const controller = new AbortController();
-      abortRef.current = controller;
-      setIsThinking(true);
-      setIsStreaming(true);
-
-      appendMessage(chatId, {
-        id: generateId("msg"),
-        role: "assistant",
-        model: selectedModel,
-        content: "",
-        createdAt: new Date(),
-        streaming: true,
-      });
-
-      try {
-        await streamMessage(
-          chatId,
-          safeText || "Please analyze the attached file(s).",
-          selectedModel,
-          selectedMode,
-          (chunk) => {
-            if (controller.signal.aborted) return;
-
-            patchLastMessage(chatId, (last) => ({
-              content: `${last.content || ""}${chunk || ""}`,
+    try {
+      await streamMessage(
+        chatId, messageText, selectedModel, selectedMode,
+        chunk => {
+          if (!controller.signal.aborted) {
+            setIsThinking(false);
+            patchLastMessage(chatId, last => ({
+              content: `${last?.content || ""}${chunk || ""}`,
             }));
-          },
-          safeAttachments.map((file) => file.id).filter(Boolean),
-          controller.signal
-        );
-
-        if (!controller.signal.aborted) {
-          patchLastMessage(chatId, () => ({
-            streaming: false,
-          }));
-        }
-      } catch (err) {
-        if (err?.name === "AbortError") {
-          patchLastMessage(chatId, () => ({
-            streaming: false,
-          }));
-          return;
-        }
-
-        console.error(err);
-
-        patchLastMessage(chatId, () => ({
+          }
+        },
+        fileIds, controller.signal
+      );
+      if (!controller.signal.aborted) patchLastMessage(chatId, () => ({ streaming: false }));
+    } catch (err) {
+      if (err?.name !== "AbortError") {
+        console.error("[SEND MESSAGE ERROR]", err);
+        patchLastMessage(chatId, last => ({
+          content: last?.content || err?.message || "Unable to connect to backend.",
           streaming: false,
         }));
-
-        appendMessage(chatId, {
-          id: generateId("msg"),
-          role: "assistant",
-          model: MODEL_NAME,
-          createdAt: new Date(),
-          content:
-            err?.message ||
-            "Unable to connect to backend.",
-        });
-      } finally {
-        if (abortRef.current === controller) {
-          abortRef.current = null;
-        }
-
-        setIsThinking(false);
-        setIsStreaming(false);
+      } else {
+        patchLastMessage(chatId, () => ({ streaming: false }));
       }
-    },
-    [
-      activeId,
-      selectedModel,
-      selectedMode,
-      appendMessage,
-      patchLastMessage,
-    ]
-  );
-
-  /* ----------------------------- */
-  /* Regenerate                    */
-  /* ----------------------------- */
+      throw err;
+    } finally {
+      if (abortRef.current === controller) abortRef.current = null;
+      setIsThinking(false);
+      setIsStreaming(false);
+    }
+  }, [activeId, selectedModel, selectedMode, appendMessage, patchLastMessage]);
 
   const regenerateLast = useCallback(async () => {
-    if (!activeConversation) return;
-
-    const lastUser = [...activeConversation.messages]
-      .reverse()
-      .find((m) => m.role === "user");
-
+    if (!activeConversation || isStreaming || isThinking) return;
+    const messages = Array.isArray(activeConversation.messages) ? activeConversation.messages : [];
+    const lastUser = [...messages].reverse().find(m => m?.role === "user");
     if (!lastUser) return;
 
     const chatId = activeConversation.id;
+    const fileIds = Array.isArray(lastUser.attachments)
+      ? lastUser.attachments.map(file => file?.id).filter(Boolean) : [];
 
-    updateConversation(chatId, (c) => ({
+    updateConversation(chatId, c => ({
       ...c,
-      messages:
-        c.messages[c.messages.length - 1]?.role === "assistant"
-          ? c.messages.slice(0, -1)
-          : c.messages,
+      messages: c.messages?.[c.messages.length - 1]?.role === "assistant"
+        ? c.messages.slice(0, -1) : c.messages,
     }));
 
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setIsThinking(true);
+    setIsStreaming(true);
+    appendMessage(chatId, {
+      role: "assistant", content: "", createdAt: new Date(),
+      model: selectedModel, streaming: true,
+    });
+
     try {
-      const fileIds = Array.isArray(lastUser.attachments)
-        ? lastUser.attachments.filter(Boolean).map((file) => file.id).filter(Boolean)
-        : [];
-
-      const reply = await sendMessage(
-        chatId,
-        lastUser.content,
-        selectedModel,
-        selectedMode,
-        fileIds
+      await streamMessage(
+        chatId, lastUser.content, selectedModel, selectedMode,
+        chunk => {
+          if (!controller.signal.aborted) {
+            setIsThinking(false);
+            patchLastMessage(chatId, last => ({
+              content: `${last?.content || ""}${chunk || ""}`,
+            }));
+          }
+        },
+        fileIds, controller.signal, true
       );
-
-      await streamReply(chatId, reply);
-
+      if (!controller.signal.aborted) patchLastMessage(chatId, () => ({ streaming: false }));
     } catch (err) {
-      console.error(err);
+      if (err?.name !== "AbortError") console.error("[REGENERATE ERROR]", err);
+      patchLastMessage(chatId, () => ({ streaming: false }));
+    } finally {
+      if (abortRef.current === controller) abortRef.current = null;
+      setIsThinking(false);
+      setIsStreaming(false);
     }
   }, [
-    activeConversation,
-    selectedModel,
-    selectedMode,
-    streamReply,
-    updateConversation,
+    activeConversation, isStreaming, isThinking, selectedModel, selectedMode,
+    updateConversation, appendMessage, patchLastMessage
   ]);
 
-  /* ----------------------------- */
-  /* Provider                      */
-  /* ----------------------------- */
+  const clearChat = useCallback(() => {
+    if (!activeId) return;
+    updateConversation(activeId, c => ({ ...c, messages: [], updatedAt: new Date() }));
+  }, [activeId, updateConversation]);
 
   const value = {
-    conversations,
-
-    activeConversation,
-
-    activeId,
-    setActiveId,
-
-    openChat,
-
-    modelName: MODEL_NAME,
-
-    selectedModel,
-    setSelectedModel,
-
-    selectedMode,
-    setSelectedMode,
-
-    isStreaming,
-    isThinking,
-
-    newChat,
-    clearChat,
-    deleteChat,
-    renameChat,
-    toggleFavorite,
-
-    sendUserMessage,
-    regenerateLast,
-    stopResponse,
+    conversations, activeConversation, activeId, setActiveId, openChat,
+    modelName: MODEL_NAME, selectedModel, setSelectedModel,
+    selectedMode, setSelectedMode, isStreaming, isThinking,
+    newChat, clearChat, deleteChat, renameChat, toggleFavorite,
+    sendUserMessage, regenerateLast, stopResponse,
   };
 
-  return (
-    <ChatContext.Provider value={value}>
-      {children}
-    </ChatContext.Provider>
-  );
+  return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 }
-
-/* ----------------------------- */
-/* Hook                          */
-/* ----------------------------- */
 
 export function useChat() {
   const ctx = useContext(ChatContext);
-
-  if (!ctx) {
-    throw new Error(
-      "useChat must be used inside ChatProvider"
-    );
-  }
-
+  if (!ctx) throw new Error("useChat must be used inside ChatProvider");
   return ctx;
 }
