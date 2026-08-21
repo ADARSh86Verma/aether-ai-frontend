@@ -2,7 +2,7 @@
 
 This frontend is configured to proxy `/api/*` and `/media/*` to the current Cloudflare Quick Tunnel:
 
-`https://facial-length-sodium-arm.trycloudflare.com`
+`https:/wall-broadcast-launches-emotionaltrycloudflarecom`
 
 ## Important
 The `trycloudflare.com` Quick Tunnel is temporary. If you restart `cloudflared`, update `vercel.json` with the new tunnel URL and redeploy.
