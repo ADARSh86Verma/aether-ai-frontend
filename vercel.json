@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://wall-broadcast-launches-emotional.trycloudflare.com/:path*"
+      "destination": "https://candidates-sorts-maple-else.trycloudflare.com/:path*"
     },
     {
       "source": "/media/:path*",
-      "destination": "https://wall-broadcast-launches-emotional.trycloudflare.com/media/:path*"
+      "destination": "https://candidates-sorts-maple-else.trycloudflare.com/media/:path*"
     },
     {
       "source": "/(.*)",
