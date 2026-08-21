@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://pulse-brian-trim-reservations.trycloudflare.com/:path*"
+      "destination":"https://andrews-invention-configured-circuit.trycloudflare.com/:path*"
     },
     {
       "source": "/media/:path*",
-      "destination": "https://pulse-brian-trim-reservations.trycloudflare.com/media/:path*"
+      "destination":"https://andrews-invention-configured-circuit.trycloudflare.com/media/:path*"
     },
     {
       "source": "/(.*)",
