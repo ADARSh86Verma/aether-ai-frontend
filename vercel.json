@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://candidates-sorts-maple-else.trycloudflare.com/:path*"
+      "destination": "https://pulse-brian-trim-reservations.trycloudflare.com/:path*"
     },
     {
       "source": "/media/:path*",
-      "destination": "https://candidates-sorts-maple-else.trycloudflare.com/media/:path*"
+      "destination": "https://pulse-brian-trim-reservations.trycloudflare.com/media/:path*"
     },
     {
       "source": "/(.*)",
