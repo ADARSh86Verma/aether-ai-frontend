@@ -19,6 +19,7 @@ import {
 
 import { generateId } from "../utils/formatTime";
 import { streamMessage } from "../services/chatService";
+import { useAuth } from "./AuthContext";
 
 const ChatContext = createContext(null);
 
@@ -416,12 +417,17 @@ export function ChatProvider({ children }) {
       }
     }
 
-    loadChats();
+    if (!initializing && isAuthenticated) {
+      loadChats();
+    } else if (!initializing && !isAuthenticated) {
+      setConversations([]);
+      setActiveId(null);
+    }
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [initializing, isAuthenticated]);
 
   /* =======================================================
      ACTIVE CONVERSATION
@@ -520,7 +526,12 @@ export function ChatProvider({ children }) {
           response;
 
         const normalized =
-          normalizeConversation(raw);
+          normalizeConversation({
+            ...raw,
+            messages: Array.isArray(response?.messages)
+              ? response.messages
+              : raw?.messages,
+          });
 
         if (!normalized) {
           throw new Error(
@@ -656,11 +667,18 @@ export function ChatProvider({ children }) {
         return;
       }
 
+      const nextFavorite =
+        typeof favorite === "boolean"
+          ? favorite
+          : !Boolean(
+              conversations.find((conversation) => conversation.id === chatId)?.favorite
+            );
+
       try {
         const response =
           await favoriteConversation(
             chatId,
-            Boolean(favorite)
+            nextFavorite
           );
 
         updateConversation(
@@ -672,7 +690,7 @@ export function ChatProvider({ children }) {
               response?.conversation
                 ?.favorite ??
               response?.favorite ??
-              Boolean(favorite),
+              nextFavorite,
           })
         );
 
@@ -685,7 +703,7 @@ export function ChatProvider({ children }) {
         throw error;
       }
     },
-    [updateConversation]
+    [updateConversation, conversations]
   );
 
   /* =======================================================
@@ -901,6 +919,22 @@ export function ChatProvider({ children }) {
   ]);
 
   /* =======================================================
+     CONTEXT ACTION ALIASES
+  ======================================================= */
+
+  const stopResponse = stopGeneration;
+
+  const regenerateLast = useCallback(async () => {
+    const conversation = activeConversation;
+    const messages = Array.isArray(conversation?.messages)
+      ? conversation.messages
+      : [];
+    const lastUser = [...messages].reverse().find((m) => m?.role === "user");
+    if (!lastUser?.content) return;
+    return sendUserMessage(lastUser.content, []);
+  }, [activeConversation, sendUserMessage]);
+
+  /* =======================================================
      CONTEXT VALUE
   ======================================================= */
 
@@ -927,6 +961,8 @@ export function ChatProvider({ children }) {
 
       sendUserMessage,
       stopGeneration,
+      stopResponse,
+      regenerateLast,
 
       appendMessage,
       patchLastMessage,
@@ -948,6 +984,8 @@ export function ChatProvider({ children }) {
       toggleFavorite,
       sendUserMessage,
       stopGeneration,
+      stopResponse,
+      regenerateLast,
       appendMessage,
       patchLastMessage,
     ]

@@ -14,7 +14,7 @@ export default defineConfig({
 
     proxy: {
       "/api": {
-        target:"https://andrews-invention-configured-circuit.trycloudflare.com",
+        target: "https://peaceful-representatives-principles-beginner.trycloudflare.com",
         changeOrigin: true,
         rewrite: (path) =>
           path.replace(/^\/api/, ""),

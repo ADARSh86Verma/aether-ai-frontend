@@ -1,7 +1,5 @@
 import api from './api';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://192.168.31.31:8000';
-
 export async function uploadFile(file) {
   const form = new FormData();
   form.append('file', file, file.name);
@@ -17,17 +15,18 @@ export async function uploadFile(file) {
 export function fileDownloadUrl(file) {
   if (!file?.download_url) return null;
   if (file.download_url.startsWith('http://') || file.download_url.startsWith('https://')) return file.download_url;
-  return `${BACKEND_URL}${file.download_url}`;
+  if (file.download_url.startsWith('/api/')) return file.download_url;
+  if (file.download_url.startsWith('/files/')) return `/api${file.download_url}`;
+  return `/api/${file.download_url.replace(/^\/+/, '')}`;
 }
 
 export async function downloadFile(file) {
   const url = fileDownloadUrl(file);
   if (!url) throw new Error('Invalid file download URL.');
 
-  const response = await fetch(url, { mode: 'cors' });
-  if (!response.ok) throw new Error(`Download failed: ${response.status}`);
+  const response = await api.get(url, { responseType: 'blob', timeout: 180000 });
 
-  const blob = await response.blob();
+  const blob = response.data;
   const blobUrl = window.URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = blobUrl;

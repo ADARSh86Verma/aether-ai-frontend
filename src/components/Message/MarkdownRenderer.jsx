@@ -161,7 +161,9 @@ export default function MarkdownRenderer({
             ...props
           }) {
 
-            if (inline) {
+            const isInline = inline ?? !className;
+
+            if (isInline) {
 
               return (
                 <code
